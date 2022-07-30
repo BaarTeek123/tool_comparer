@@ -1,11 +1,9 @@
 import os, json, nltk, re
 # spell checkers
-import time
-
+import time, pandas
 from spellchecker import SpellChecker
 from autocorrect import Speller
 import textblob
-
 import Levenshtein
 # grmma
 from gingerit.gingerit import GingerIt
@@ -28,21 +26,37 @@ class Distances:
         self.levenshtein_distance = Levenshtein.distance(str_1, str_2)
         self.jaro_winkler = Levenshtein.jaro_winkler(self.__word_1, self.__word_2)
         # self.__set_operations()
-        self.damerau_levenshtein_distance = len(self.get_string_oprations())
+        self.damerau_levenshtein_distance = len(self.__get_string_oprations())
         self.similarity = Levenshtein.ratio(self.__word_1, self.__word_2)
 
-    def __str__(self):
-        return f'1. {self.__word_1} \n2. {self.__word_2}\n\t-D-L distance: {self.damerau_levenshtein_distance}' \
-               f'\n\t\tD-L distance operations: {self.type_of_damerau_lev_operations}\n\t-L distance: ' \
-               f'{self.levenshtein_distance}\n\t\t-L distance operations: {self.type_of_lev_operations}'
+    # def __str__(self):
+    #     return f'-D-L distance: {self.damerau_levenshtein_distance} -L distance: {self.levenshtein_distance}'
 
-    def __set_operations(self):
-        for operation in Levenshtein.editops(self.__word_1, self.__word_2):
-            self.type_of_lev_operations[operation[0]] += 1
-        for operation in self.get_string_oprations(is_damerau=True):
-            self.type_of_damerau_lev_operations[operation[0]] += 1
+    # f'\n\t\tD-L distance operations: {self.type_of_damerau_lev_operations}\n\t-L distance: ' \
+    # f'{self.levenshtein_distance}\n\t\t-L distance operations: {self.type_of_lev_operations}'
 
-    def get_string_oprations(self, is_damerau=True):
+    # def __set_operations(self):
+    #     for operation in Levenshtein.editops(self.__word_1, self.__word_2):
+    #         self.type_of_lev_operations[operation[0]] += 1
+    #     for operation in self.get_string_oprations(is_damerau=True):
+    #         self.type_of_damerau_lev_operations[operation[0]] += 1
+
+    def get_attributes(self):
+        dictionary = {}
+        def_vals = {
+            'levenshtein_distance': 0,
+            'damerau_levenshtein_distance': 0,
+            'similarity': 1.0,
+            'jaro_winkler': 1.0
+        }
+        for k in [name for name in dir(self) if not name.startswith('_')]:
+            try:
+                dictionary[k] = getattr(self, k, def_vals[k])
+            except KeyError:
+                pass
+        return dictionary
+
+    def __get_string_oprations(self, is_damerau=True):
         dist_matrix = self.__get_damerau_levenshtein_distance_matrix(is_damerau=is_damerau)
         i, j = len(dist_matrix), len(dist_matrix[0])
         i -= 1
@@ -194,8 +208,9 @@ class Tested_Sentence:
     def verify_variant(self, variant_foo, label: str, sentence):
         start_time = time.time()
         if variant_foo(sentence) != self.template:
-            self.results[label] = (variant_foo(sentence), Distances(variant_foo(sentence), self.template),
-                                   time.time() - start_time)
+            self.results[label] = [str(variant_foo(sentence)),
+                                   Distances(variant_foo(sentence), self.template).get_attributes(),
+                                   time.time() - start_time]
 
 
 def object_to_dicts(objct):
@@ -268,10 +283,14 @@ def check_sentences(source_txt_file_path: str, destination_file_path: str):
                 i += 1
 
 
-sent_1, sent_2 = 'I love apples.', 'I loves aples.'
-print(Tested_Sentence(sent_1, sent_2))
+# sent_1, sent_2 = 'I love apples.', 'I loves aples.'
+# test = Tested_Sentence(sent_1, sent_2)
+# print(test)
+# print(test.__dict__)
 
-# import pandas as pd
-#
-# def write_to_pandas_frame():
-#     columns = []
+
+def write_to_pandas_frame(test_sentence: Tested_Sentence):
+    columns = []
+    object = None
+    index = [test_sentence.template]
+    return pandas.DataFrame(object, columns=columns, index=index)

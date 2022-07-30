@@ -1,16 +1,26 @@
-# This is a sample Python script.
+import Levenshtein
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import Comparer
+
+sent_1, sent_2 = 'I loves aples.', 'I love apples.'
+print(Levenshtein.ratio(sent_2, sent_1))
+print(Comparer.Distances(sent_1, sent_2).get_attributes())
+
+# test_sentence = Comparer.Tested_Sentence(sent_1, sent_2)
+# print(test_sentence)
+# print(test_sentence)
+# print(test_sentence.__dict__)
+# print(Comparer.object_to_dicts(test_sentence))
+# columns = [
+#
+#
+#
+#
+# ]
+# object = None
+# index = [test_sentence.template]
+# def get_attributes(obj):
+#     return [name for name in dir(obj) if not name.startswith('_')]
+# print(Comparer.Distances(sent_2, sent_1).get_attributes())
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
