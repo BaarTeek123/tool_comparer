@@ -140,14 +140,6 @@ J
 K
 grammar_incorrect/WOULD.txt,7\4\741ee7218f8803505d49076d2d783d8b4a0fcf24
 H
-misspells/1_misspell.txt,7\2\72802414648400a3f1b1e13cf5e0f8594d4d55ca
-P
- misspells/1_misspell_correct.txt,3\2\32b51ab2c041f1846a4e3469069f6dcd29a4bb30
-H
-misspells/2_misspell.txt,f\d\fdf79c93735143c936ebfde7f63e7ae7986585bc
-P
- misspells/2_misspell_correct.txt,3\0\300ec0821697416021611f2d243cf85e60528db7
-H
 misspells/3_misspell.txt,1\b\1bc7a6f75c89413b50930cd3e6ad6b1e2b887a9d
 P
  misspells/3_misspell_correct.txt,7\f\7fedc60aafabebb5c7e64cf8e49ad06100a234cc

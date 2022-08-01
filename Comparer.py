@@ -12,100 +12,91 @@ import language_tool_python
 import itertools
 
 
-class Distances:
-    def __init__(self, str_1, str_2):
-        self.__word_1 = str_1
-        self.__word_2 = str_2
-        # self.type_of_damerau_lev_operations = {"insert": 0,
-        #                                        "replace": 0,
-        #                                        "delete": 0,
-        #                                        "transpose": 0}
-        # self.type_of_lev_operations = {"insert": 0,
-        #                                "replace": 0,
-        #                                "delete": 0}
-        self.levenshtein_distance = Levenshtein.distance(str_1, str_2)
-        self.jaro_winkler = Levenshtein.jaro_winkler(self.__word_1, self.__word_2)
-        # self.__set_operations()
-        self.damerau_levenshtein_distance = len(self.__get_string_oprations())
-        self.similarity = Levenshtein.ratio(self.__word_1, self.__word_2)
-
-    # def __str__(self):
-    #     return f'-D-L distance: {self.damerau_levenshtein_distance} -L distance: {self.levenshtein_distance}'
-
-    # f'\n\t\tD-L distance operations: {self.type_of_damerau_lev_operations}\n\t-L distance: ' \
-    # f'{self.levenshtein_distance}\n\t\t-L distance operations: {self.type_of_lev_operations}'
-
-    # def __set_operations(self):
-    #     for operation in Levenshtein.editops(self.__word_1, self.__word_2):
-    #         self.type_of_lev_operations[operation[0]] += 1
-    #     for operation in self.get_string_oprations(is_damerau=True):
-    #         self.type_of_damerau_lev_operations[operation[0]] += 1
-
-    def get_attributes(self):
-        dictionary = {}
-        def_vals = {
-            'levenshtein_distance': 0,
-            'damerau_levenshtein_distance': 0,
-            'similarity': 1.0,
-            'jaro_winkler': 1.0
-        }
-        for k in [name for name in dir(self) if not name.startswith('_')]:
-            try:
-                dictionary[k] = getattr(self, k, def_vals[k])
-            except KeyError:
-                pass
-        return dictionary
-
-    def __get_string_oprations(self, is_damerau=True):
-        dist_matrix = self.__get_damerau_levenshtein_distance_matrix(is_damerau=is_damerau)
-        i, j = len(dist_matrix), len(dist_matrix[0])
-        i -= 1
-        j -= 1
-        operations_list = []
-        while i != -1 and j != -1:
-            if is_damerau and i > 1 and j > 1 and self.__word_1[i - 1] == self.__word_2[j - 2] and self.__word_1[i - 2] \
-                    == self.__word_2[j - 1]:
-                if dist_matrix[i - 2][j - 2] < dist_matrix[i][j]:
-                    operations_list.insert(0, ('transpose', i - 1, i - 2))
-                    i -= 2
-                    j -= 2
-                    continue
-            tmp = [dist_matrix[i - 1][j - 1], dist_matrix[i][j - 1], dist_matrix[i - 1][j]]
-            index = tmp.index(min(tmp))
-            if index == 0:
-                if dist_matrix[i][j] > dist_matrix[i - 1][j - 1]:
-                    operations_list.insert(0, ('replace', i - 1, j - 1))
-                i -= 1
-                j -= 1
-            elif index == 1:
-                operations_list.insert(0, ('insert', i - 1, j - 1))
-                j -= 1
-            elif index == 2:
-                operations_list.insert(0, ('delete', i - 1, i - 1))
-                i -= 1
-        return operations_list
-
-    def __get_damerau_levenshtein_distance_matrix(self, is_damerau=False):
-        distance_matrix = [[0 for _ in range(len(self.__word_2) + 1)] for _ in range(len(self.__word_1) + 1)]
-        for i in range(len(self.__word_1) + 1):
-            distance_matrix[i][0] = i
-        for j in range(len(self.__word_2) + 1):
-            distance_matrix[0][j] = j
-        for i in range(len(self.__word_1)):
-            for j in range(len(self.__word_2)):
-                if self.__word_1[i] == self.__word_2[j]:
-                    cost = 0
-                else:
-                    cost = 1
-                distance_matrix[i + 1][j + 1] = min(distance_matrix[i][j + 1] + 1,  # insert
-                                                    distance_matrix[i + 1][j] + 1,  # delete
-                                                    distance_matrix[i][j] + cost)  # replace
-                if is_damerau:
-                    if i and j and self.__word_1[i] == self.__word_2[j - 1] and self.__word_1[i - 1] == self.__word_2[
-                        j]:
-                        distance_matrix[i + 1][j + 1] = min(distance_matrix[i + 1][j + 1],
-                                                            distance_matrix[i - 1][j - 1] + cost)  # transpose
-        return distance_matrix
+# class Distances:
+#     default_vals = {
+#         'levenshtein_distance': 0,
+#         'damerau_levenshtein_distance': 0,
+#         'similarity': 1.0,
+#         'jaro_winkler': 1.0
+#     }
+#     def __init__(self, str_1, str_2):
+#         self.levenshtein_distance = Levenshtein.distance(str_1, str_2)
+#         self.jaro_winkler = Levenshtein.jaro_winkler(str_1, str_2)
+#         # self.__set_operations()
+#         self.damerau_levenshtein_distance = len(self.__get_string_oprations(str_1, str_2))
+#         self.similarity = Levenshtein.ratio(str_1, str_2)
+#
+#     # def __str__(self):
+#     #     return f'-D-L distance: {self.damerau_levenshtein_distance} -L distance: {self.levenshtein_distance}'
+#
+#     # f'\n\t\tD-L distance operations: {self.type_of_damerau_lev_operations}\n\t-L distance: ' \
+#     # f'{self.levenshtein_distance}\n\t\t-L distance operations: {self.type_of_lev_operations}'
+#
+#     # def __set_operations(self):
+#     #     for operation in Levenshtein.editops(self.__word_1, self.__word_2):
+#     #         self.type_of_lev_operations[operation[0]] += 1
+#     #     for operation in self.get_string_oprations(is_damerau=True):
+#     #         self.type_of_damerau_lev_operations[operation[0]] += 1
+#
+#     def get_attributes(self):
+#         dictionary = {}
+#         for k in [name for name in dir(self) if not name.startswith('_')]:
+#             try:
+#                 dictionary[k] = getattr(self, k, self.default_vals[k])
+#             except KeyError:
+#                 pass
+#         return dictionary
+#
+#     def __get_string_oprations(self, word_1, word_2, is_damerau=True):
+#         dist_matrix = self.__get_damerau_levenshtein_distance_matrix(word_1, word_2, is_damerau=is_damerau)
+#         i, j = len(dist_matrix), len(dist_matrix[0])
+#         i -= 1
+#         j -= 1
+#         operations_list = []
+#         while i != -1 and j != -1:
+#             if is_damerau and i > 1 and j > 1 and word_1[i - 1] == word_2[j - 2] and word_1[i - 2] \
+#                     == word_2[j - 1]:
+#                 if dist_matrix[i - 2][j - 2] < dist_matrix[i][j]:
+#                     operations_list.insert(0, ('transpose', i - 1, i - 2))
+#                     i -= 2
+#                     j -= 2
+#                     continue
+#             tmp = [dist_matrix[i - 1][j - 1], dist_matrix[i][j - 1], dist_matrix[i - 1][j]]
+#             index = tmp.index(min(tmp))
+#             if index == 0:
+#                 if dist_matrix[i][j] > dist_matrix[i - 1][j - 1]:
+#                     operations_list.insert(0, ('replace', i - 1, j - 1))
+#                 i -= 1
+#                 j -= 1
+#             elif index == 1:
+#                 operations_list.insert(0, ('insert', i - 1, j - 1))
+#                 j -= 1
+#             elif index == 2:
+#                 operations_list.insert(0, ('delete', i - 1, i - 1))
+#                 i -= 1
+#         return operations_list
+#
+#     def __get_damerau_levenshtein_distance_matrix(self, word_2, word_1, is_damerau=False):
+#         distance_matrix = [[0 for _ in range(len(word_2) + 1)] for _ in range(len(word_1) + 1)]
+#         for i in range(len(word_1) + 1):
+#             distance_matrix[i][0] = i
+#         for j in range(len(word_2) + 1):
+#             distance_matrix[0][j] = j
+#         for i in range(len(word_1)):
+#             for j in range(len(word_2)):
+#                 if word_1[i] == word_2[j]:
+#                     cost = 0
+#                 else:
+#                     cost = 1
+#                 distance_matrix[i + 1][j + 1] = min(distance_matrix[i][j + 1] + 1,  # insert
+#                                                     distance_matrix[i + 1][j] + 1,  # delete
+#                                                     distance_matrix[i][j] + cost)  # replace
+#                 if is_damerau:
+#                     if i and j and word_1[i] == word_2[j - 1] and word_1[i - 1] == word_2[
+#                         j]:
+#                         distance_matrix[i + 1][j + 1] = min(distance_matrix[i + 1][j + 1],
+#                                                             distance_matrix[i - 1][j - 1] + cost)  # transpose
+#         return distance_matrix
 
 
 def save_punctuation(sentence: str):
@@ -173,44 +164,121 @@ class Word:
 
 
 class Tested_Sentence:
-    def __init__(self, template_sentence, test_sent: str):
+    default_vals = {
+        'levenshtein_distance': 0,
+        'damerau_levenshtein_distance': 0,
+        'similarity': 1.0,
+        'jaro_winkler': 1.0
+    }
+
+    def __init__(self, template_sentence: str, test_sent: str):
         self.template = template_sentence
         self.sentence_to_test = test_sent
-        self.results = {}
-        self.verify_variant(correct_spelling_spell_checker, 'SpellChecker', self.sentence_to_test)
-        self.verify_variant(correct_spelling_txt_blb, 'TextBlob', self.sentence_to_test)
-        self.verify_variant(correct_spelling_autocorrect, 'Autocorrect', self.sentence_to_test)
-        self.verify_variant(grammar_check_gingerit, 'GingerIt', self.sentence_to_test)
-        self.verify_variant(grammar_check_language_tool, 'Language_tool', self.sentence_to_test)
-        self.verify_variant(grammar_check_gingerit, 'GingerIt(SpellChecker)',
-                            correct_spelling_spell_checker(self.sentence_to_test))
-        self.verify_variant(grammar_check_gingerit, 'GingerIt(TextBlob)',
-                            correct_spelling_txt_blb(self.sentence_to_test))
-        self.verify_variant(grammar_check_gingerit, 'GingerIt(Autocorrect)',
-                            correct_spelling_autocorrect(self.sentence_to_test))
-        self.verify_variant(grammar_check_language_tool, 'Language_tool(SpellChecker)',
-                            correct_spelling_spell_checker(self.sentence_to_test))
-        self.verify_variant(grammar_check_language_tool, 'Language_tool(TextBlob)',
-                            correct_spelling_txt_blb(self.sentence_to_test))
-        self.verify_variant(grammar_check_language_tool, 'Language_tool(Autocorrect)',
-                            correct_spelling_autocorrect(self.sentence_to_test))
-        list_of_sentences = [str(k) for k in self.results.values() if k != 0]
-        if len(list_of_sentences) > 0:
-            self.results['Median'] = Levenshtein.median_improve(Levenshtein.median(list_of_sentences),
-                                                                list_of_sentences)
+        self.levenshtein_distance = Levenshtein.distance(template_sentence, test_sent)
+        self.jaro_winkler = Levenshtein.jaro_winkler(template_sentence, test_sent)
+        self.damerau_levenshtein_distance = len(self.__get_string_oprations(template_sentence, test_sent))
+        self.similarity = Levenshtein.ratio(template_sentence, test_sent)
 
-    def __str__(self):
-        tmp = ''
-        for k in self.results.keys():
-            tmp += f'{k}: {self.results[k]}\n'
-        return 'Template: ' + str(self.template) + '\n sentence to check: ' + self.sentence_to_test + '\n' + tmp
 
-    def verify_variant(self, variant_foo, label: str, sentence):
-        start_time = time.time()
-        if variant_foo(sentence) != self.template:
-            self.results[label] = [str(variant_foo(sentence)),
-                                   Distances(variant_foo(sentence), self.template).get_attributes(),
-                                   time.time() - start_time]
+        # self.results = {}
+        # false_positives = {
+        #     "spellchecker": [], "textblob": [], "autocorrect": [], "gingerit_results": [], "language_tool": [],
+        #     "gingerit_spellchecker": [], "gingerit_textblob": [], "gingerit_autocorrect": [],
+        #     "language_tool_spellchecker": [], "language_tool_textblob": [], "language_tool_autocorrect": [],
+        #     "median": []
+        # }
+
+        # self.verify_variant(correct_spelling_spell_checker, 'SpellChecker', self.sentence_to_test)
+        # self.verify_variant(correct_spelling_txt_blb, 'TextBlob', self.sentence_to_test)
+        # self.verify_variant(correct_spelling_autocorrect, 'Autocorrect', self.sentence_to_test)
+        # self.verify_variant(grammar_check_gingerit, 'GingerIt', self.sentence_to_test)
+        # self.verify_variant(grammar_check_language_tool, 'Language_tool', self.sentence_to_test)
+        # self.verify_variant(grammar_check_gingerit, 'GingerIt(SpellChecker)',
+        #                     correct_spelling_spell_checker(self.sentence_to_test))
+        # self.verify_variant(grammar_check_gingerit, 'GingerIt(TextBlob)',
+        #                     correct_spelling_txt_blb(self.sentence_to_test))
+        # self.verify_variant(grammar_check_gingerit, 'GingerIt(Autocorrect)',
+        #                     correct_spelling_autocorrect(self.sentence_to_test))
+        # self.verify_variant(grammar_check_language_tool, 'Language_tool(SpellChecker)',
+        #                     correct_spelling_spell_checker(self.sentence_to_test))
+        # self.verify_variant(grammar_check_language_tool, 'Language_tool(TextBlob)',
+        #                     correct_spelling_txt_blb(self.sentence_to_test))
+        # self.verify_variant(grammar_check_language_tool, 'Language_tool(Autocorrect)',
+        #                     correct_spelling_autocorrect(self.sentence_to_test))
+        # list_of_sentences = [str(k) for k in self.results.values() if k != 0]
+        # if len(list_of_sentences) > 0:
+        #     self.results['Median'] = Levenshtein.median_improve(Levenshtein.median(list_of_sentences),
+        #                                                         list_of_sentences)
+
+    # def to_dict(self):
+    #     tmp = self.__dict__.update(self.__dict__['results'])
+    #     # del tmp['results']
+    #     return tmp
+
+    def get_attributes(self):
+        dictionary = {}
+        for k in [name for name in dir(self) if not name.startswith('_')]:
+            try:
+                dictionary[k] = getattr(self, k, self.default_vals[k])
+            except KeyError:
+                pass
+        return dictionary
+
+    def __get_string_oprations(self, __word_1, __word_2, is_damerau=True):
+        dist_matrix = self.__get_damerau_levenshtein_distance_matrix(__word_2, __word_1, is_damerau=is_damerau)
+        i, j = len(dist_matrix), len(dist_matrix[0])
+        i -= 1
+        j -= 1
+        operations_list = []
+        while i != -1 and j != -1:
+            if is_damerau and i > 1 and j > 1 and __word_1[i - 1] == __word_2[j - 2] and __word_1[i - 2] \
+                    == __word_2[j - 1]:
+                if dist_matrix[i - 2][j - 2] < dist_matrix[i][j]:
+                    operations_list.insert(0, ('transpose', i - 1, i - 2))
+                    i -= 2
+                    j -= 2
+                    continue
+            tmp = [dist_matrix[i - 1][j - 1], dist_matrix[i][j - 1], dist_matrix[i - 1][j]]
+            index = tmp.index(min(tmp))
+            if index == 0:
+                if dist_matrix[i][j] > dist_matrix[i - 1][j - 1]:
+                    operations_list.insert(0, ('replace', i - 1, j - 1))
+                i -= 1
+                j -= 1
+            elif index == 1:
+                operations_list.insert(0, ('insert', i - 1, j - 1))
+                j -= 1
+            elif index == 2:
+                operations_list.insert(0, ('delete', i - 1, i - 1))
+                i -= 1
+        return operations_list
+
+    def __get_damerau_levenshtein_distance_matrix(self, word_2, word_1, is_damerau=False):
+        distance_matrix = [[0 for _ in range(len(word_2) + 1)] for _ in range(len(word_1) + 1)]
+        for i in range(len(word_1) + 1):
+            distance_matrix[i][0] = i
+        for j in range(len(word_2) + 1):
+            distance_matrix[0][j] = j
+        for i in range(len(word_1)):
+            for j in range(len(word_2)):
+                if word_1[i] == word_2[j]:
+                    cost = 0
+                else:
+                    cost = 1
+                distance_matrix[i + 1][j + 1] = min(distance_matrix[i][j + 1] + 1,  # insert
+                                                    distance_matrix[i + 1][j] + 1,  # delete
+                                                    distance_matrix[i][j] + cost)  # replace
+                if is_damerau:
+                    if i and j and word_1[i] == word_2[j - 1] and word_1[i - 1] == word_2[
+                        j]:
+                        distance_matrix[i + 1][j + 1] = min(distance_matrix[i + 1][j + 1],
+                                                            distance_matrix[i - 1][j - 1] + cost)  # transpose
+        return distance_matrix
+
+
+    # def verify_variant(self, variant_foo, label: str, sentence):
+    #     start_time = time.time()
+    #     self.results[label] = [str(variant_foo(sentence)), time.time() - start_time]
 
 
 def object_to_dicts(objct):
@@ -275,22 +343,14 @@ def add_simple_dict_to_json_file(path_to_file, key, dict_obj):
         file.close()
 
 
-def check_sentences(source_txt_file_path: str, destination_file_path: str):
-    i = 0
-    if os.path.isfile(source_txt_file_path) and os.path.getsize(source_txt_file_path) > 0:
-        with open(source_txt_file_path) as file:
-            for correct_sent, incorrect_sent in itertools.zip_longest(*[file] * 2):
-                i += 1
+# def check_sentences(source_txt_file_path: str, destination_file_path: str):
+#     i = 0
+#     if os.path.isfile(source_txt_file_path) and os.path.getsize(source_txt_file_path) > 0:
+#         with open(source_txt_file_path) as file:
+#             for correct_sent, incorrect_sent in itertools.zip_longest(*[file] * 2):
+#                 i += 1
 
 
-# sent_1, sent_2 = 'I love apples.', 'I loves aples.'
-# test = Tested_Sentence(sent_1, sent_2)
-# print(test)
-# print(test.__dict__)
 
 
-def write_to_pandas_frame(test_sentence: Tested_Sentence):
-    columns = []
-    object = None
-    index = [test_sentence.template]
-    return pandas.DataFrame(object, columns=columns, index=index)
+
