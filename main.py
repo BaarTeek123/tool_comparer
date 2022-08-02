@@ -47,47 +47,60 @@
 # " language_tool_spellchecker": [], " language_tool_textblob": [], " language_tool_autocorrect": [], " median": []""".replace('"', '"'))
 #
 #
-import re
+# import re
+#
+# import Comparer
+# import DataProcessing
+#
+# file = 'misspells\\4_misspell.txt'
+#
+# variants = {
+#         # self.verify_variant(correct_spelling_spell_checker, 'SpellChecker', self.sentence_to_test)
+#         # self.verify_variant(correct_spelling_txt_blb, 'TextBlob', self.sentence_to_test)
+#         # self.verify_variant(correct_spelling_autocorrect, 'Autocorrect', self.sentence_to_test)
+#         # self.verify_variant(grammar_check_gingerit, 'GingerIt', self.sentence_to_test)
+#         # self.verify_variant(grammar_check_language_tool, 'Language_tool', self.sentence_to_test)
+#         # self.verify_variant(grammar_check_gingerit, 'GingerIt(SpellChecker)',
+#         #                     correct_spelling_spell_checker(self.sentence_to_test))
+#         # self.verify_variant(grammar_check_gingerit, 'GingerIt(TextBlob)',
+#         #                     correct_spelling_txt_blb(self.sentence_to_test))
+#         # self.verify_variant(grammar_check_gingerit, 'GingerIt(Autocorrect)',
+#         #                     correct_spelling_autocorrect(self.sentence_to_test))
+#         # self.verify_variant(grammar_check_language_tool, 'Language_tool(SpellChecker)',
+#         #                     correct_spelling_spell_checker(self.sentence_to_test))
+#         # self.verify_variant(grammar_check_language_tool, 'Language_tool(TextBlob)',
+#         #                     correct_spelling_txt_blb(self.sentence_to_test))
+#         # self.verify_variant(grammar_check_language_tool, 'Language_tool(Autocorrect)',
+#         #                     correct_spelling_autocorrect(self.sentence_to_test))
+#         # list_of_sentences = [str(k) for k in self.results.values() if k != 0]
+#         # if len(list_of_sentences) > 0:
+#         #     self.results['Median'] = Levenshtein.median_improve(Levenshtein.median(list_of_sentences),
+#         #                                                         list_of_sentences)
+#                                                                 }
+#
+# #reading files
+# true_positives, false_postives = [], []
+# with open(file) as file:
+#     while True:
+#         correct_sentence = file.readline()
+#         wrong_sentence = file.readline()
+#         if not correct_sentence:
+#             break
+#         else:
+#             correct_sentence = re.findall(r'[^\n]+', correct_sentence)[0]
+#             wrong_sentence = re.findall(r'[^\n]+', wrong_sentence)[0]
+#             DataProcessing.verify_sentences(Comparer.correct_spelling_spell_checker, correct_sentence, correct_sentence, false_postives)
+#             DataProcessing.verify_sentences(Comparer.correct_spelling_spell_checker, correct_sentence, wrong_sentence, true_positives)
 
-import Comparer
-import DataProcessing
-
-file = 'misspells\\4_misspell.txt'
-
-variants = {
-        # self.verify_variant(correct_spelling_spell_checker, 'SpellChecker', self.sentence_to_test)
-        # self.verify_variant(correct_spelling_txt_blb, 'TextBlob', self.sentence_to_test)
-        # self.verify_variant(correct_spelling_autocorrect, 'Autocorrect', self.sentence_to_test)
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt', self.sentence_to_test)
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool', self.sentence_to_test)
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(SpellChecker)',
-        #                     correct_spelling_spell_checker(self.sentence_to_test))
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(TextBlob)',
-        #                     correct_spelling_txt_blb(self.sentence_to_test))
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(Autocorrect)',
-        #                     correct_spelling_autocorrect(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(SpellChecker)',
-        #                     correct_spelling_spell_checker(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(TextBlob)',
-        #                     correct_spelling_txt_blb(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(Autocorrect)',
-        #                     correct_spelling_autocorrect(self.sentence_to_test))
-        # list_of_sentences = [str(k) for k in self.results.values() if k != 0]
-        # if len(list_of_sentences) > 0:
-        #     self.results['Median'] = Levenshtein.median_improve(Levenshtein.median(list_of_sentences),
-        #                                                         list_of_sentences)
-                                                                }
-
-#reading files
-true_positives, false_postives = [], []
-with open(file) as file:
-    while True:
-        correct_sentence = file.readline()
-        wrong_sentence = file.readline()
-        if not correct_sentence:
-            break
-        else:
-            correct_sentence = re.findall(r'[^\n]+', correct_sentence)[0]
-            wrong_sentence = re.findall(r'[^\n]+', wrong_sentence)[0]
-            DataProcessing.verify_sentences(Comparer.correct_spelling_spell_checker, correct_sentence, correct_sentence, false_postives)
-            DataProcessing.verify_sentences(Comparer.correct_spelling_spell_checker, correct_sentence, wrong_sentence, true_positives)
+#
+#
+true_positives = {
+    "spellchecker": [], "textblob": [], "autocorrect": [], "gingerit": [], "language_tool": [],
+    "gingerit_spellchecker": [], "gingerit_textblob": [], "gingerit_autocorrect": [],
+    "language_tool_spellchecker": [], "language_tool_textblob": [], "language_tool_autocorrect": []
+}
+import os
+directory = 'C:\\Users\\user\\PycharmProjects\\tool_comparer\\results\\'
+for k in true_positives.keys():
+    path = directory + k
+    os.mkdir(path)
