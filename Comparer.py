@@ -11,115 +11,22 @@ import language_tool_python
 
 import itertools
 
-
-# class Distances:
-#     default_vals = {
-#         'levenshtein_distance': 0,
-#         'damerau_levenshtein_distance': 0,
-#         'similarity': 1.0,
-#         'jaro_winkler': 1.0
-#     }
-#     def __init__(self, str_1, str_2):
-#         self.levenshtein_distance = Levenshtein.distance(str_1, str_2)
-#         self.jaro_winkler = Levenshtein.jaro_winkler(str_1, str_2)
-#         # self.__set_operations()
-#         self.damerau_levenshtein_distance = len(self.__get_string_oprations(str_1, str_2))
-#         self.similarity = Levenshtein.ratio(str_1, str_2)
-#
-#     # def __str__(self):
-#     #     return f'-D-L distance: {self.damerau_levenshtein_distance} -L distance: {self.levenshtein_distance}'
-#
-#     # f'\n\t\tD-L distance operations: {self.type_of_damerau_lev_operations}\n\t-L distance: ' \
-#     # f'{self.levenshtein_distance}\n\t\t-L distance operations: {self.type_of_lev_operations}'
-#
-#     # def __set_operations(self):
-#     #     for operation in Levenshtein.editops(self.__word_1, self.__word_2):
-#     #         self.type_of_lev_operations[operation[0]] += 1
-#     #     for operation in self.get_string_oprations(is_damerau=True):
-#     #         self.type_of_damerau_lev_operations[operation[0]] += 1
-#
-#     def get_attributes(self):
-#         dictionary = {}
-#         for k in [name for name in dir(self) if not name.startswith('_')]:
-#             try:
-#                 dictionary[k] = getattr(self, k, self.default_vals[k])
-#             except KeyError:
-#                 pass
-#         return dictionary
-#
-#     def __get_string_oprations(self, word_1, word_2, is_damerau=True):
-#         dist_matrix = self.__get_damerau_levenshtein_distance_matrix(word_1, word_2, is_damerau=is_damerau)
-#         i, j = len(dist_matrix), len(dist_matrix[0])
-#         i -= 1
-#         j -= 1
-#         operations_list = []
-#         while i != -1 and j != -1:
-#             if is_damerau and i > 1 and j > 1 and word_1[i - 1] == word_2[j - 2] and word_1[i - 2] \
-#                     == word_2[j - 1]:
-#                 if dist_matrix[i - 2][j - 2] < dist_matrix[i][j]:
-#                     operations_list.insert(0, ('transpose', i - 1, i - 2))
-#                     i -= 2
-#                     j -= 2
-#                     continue
-#             tmp = [dist_matrix[i - 1][j - 1], dist_matrix[i][j - 1], dist_matrix[i - 1][j]]
-#             index = tmp.index(min(tmp))
-#             if index == 0:
-#                 if dist_matrix[i][j] > dist_matrix[i - 1][j - 1]:
-#                     operations_list.insert(0, ('replace', i - 1, j - 1))
-#                 i -= 1
-#                 j -= 1
-#             elif index == 1:
-#                 operations_list.insert(0, ('insert', i - 1, j - 1))
-#                 j -= 1
-#             elif index == 2:
-#                 operations_list.insert(0, ('delete', i - 1, i - 1))
-#                 i -= 1
-#         return operations_list
-#
-#     def __get_damerau_levenshtein_distance_matrix(self, word_2, word_1, is_damerau=False):
-#         distance_matrix = [[0 for _ in range(len(word_2) + 1)] for _ in range(len(word_1) + 1)]
-#         for i in range(len(word_1) + 1):
-#             distance_matrix[i][0] = i
-#         for j in range(len(word_2) + 1):
-#             distance_matrix[0][j] = j
-#         for i in range(len(word_1)):
-#             for j in range(len(word_2)):
-#                 if word_1[i] == word_2[j]:
-#                     cost = 0
-#                 else:
-#                     cost = 1
-#                 distance_matrix[i + 1][j + 1] = min(distance_matrix[i][j + 1] + 1,  # insert
-#                                                     distance_matrix[i + 1][j] + 1,  # delete
-#                                                     distance_matrix[i][j] + cost)  # replace
-#                 if is_damerau:
-#                     if i and j and word_1[i] == word_2[j - 1] and word_1[i - 1] == word_2[
-#                         j]:
-#                         distance_matrix[i + 1][j + 1] = min(distance_matrix[i + 1][j + 1],
-#                                                             distance_matrix[i - 1][j - 1] + cost)  # transpose
-#         return distance_matrix
-
-
-def save_punctuation(sentence: str):
-    pass
-
+language_tool = language_tool_python.LanguageTool('en-US')
+gingerit_tool = GingerIt()
+spell_checker_tool = SpellChecker()
+autocorrect_tool = Speller()
 
 def correct_spelling_spell_checker(word_or_list_of_words='') -> str:
     """ A function which returns corrected spelling (by SpellChecker)"""
     if isinstance(word_or_list_of_words, list):
         return " ".join([SpellChecker().correction((word)) for word in word_or_list_of_words])
     elif isinstance(word_or_list_of_words, str) and re.compile(r'[^\s]').search(word_or_list_of_words):
-        return SpellChecker().correction(word_or_list_of_words)
-
-    # if isinstance(word_or_list_of_words, str) and ' ' not in word_or_list_of_words and len(word_or_list_of_words) > 1:
-    #     return str(SpellChecker().correction(word_or_list_of_words.lower()))
-    # elif isinstance(word_or_list_of_words, list):
-    #     return [SpellChecker().correction(word.lower()) for word in
-    #             list(filter(lambda x: len(x) > 1, word_or_list_of_words))]
+        return spell_checker_tool.correction(word_or_list_of_words)
 
 
 def correct_spelling_autocorrect(sentence: str) -> str:
     """ A function which returns corrected spelling (by Speller from autocorrect)"""
-    return Speller()(sentence)
+    return autocorrect_tool(sentence)
 
 
 def correct_spelling_txt_blb(sentence) -> str:
@@ -142,25 +49,25 @@ def lemmatize_word(word: str) -> str:
 
 
 def grammar_check_gingerit(sentence: str) -> str:
-    return GingerIt().parse(sentence)['result']
+    return gingerit_tool.parse(sentence)['result']
 
 
 def grammar_check_language_tool(sentence: str) -> str:
-    return language_tool_python.LanguageTool('en-US').correct(sentence)
+    return language_tool.correct(sentence)
 
 
-class Word:
-    def __init__(self, word: str, correct_word: str):
-        self.original_word = word
-        self.lemmatized_word = lemmatize_word(word)
-        if correct_word != word:
-            self.corrected_word = correct_word
-
-    def __str__(self):
-        if self.corrected_word:
-            return f'{self.original_word} coorected tp: {self.corrected_word}'
-        else:
-            return f'{self.original_word} is correct.'
+# class Word:
+#     def __init__(self, word: str, correct_word: str):
+#         self.original_word = word
+#         self.lemmatized_word = lemmatize_word(word)
+#         if correct_word != word:
+#             self.corrected_word = correct_word
+#
+#     def __str__(self):
+#         if self.corrected_word:
+#             return f'{self.original_word} coorected tp: {self.corrected_word}'
+#         else:
+#             return f'{self.original_word} is correct.'
 
 
 class Tested_Sentence:
@@ -178,7 +85,6 @@ class Tested_Sentence:
         self.jaro_winkler = Levenshtein.jaro_winkler(template_sentence, test_sent)
         self.damerau_levenshtein_distance = len(self.__get_string_oprations(template_sentence, test_sent))
         self.similarity = Levenshtein.ratio(template_sentence, test_sent)
-
 
         # self.results = {}
         # false_positives = {
@@ -214,7 +120,6 @@ class Tested_Sentence:
     #     tmp = self.__dict__.update(self.__dict__['results'])
     #     # del tmp['results']
     #     return tmp
-
     def get_attributes(self):
         dictionary = {}
         for k in [name for name in dir(self) if not name.startswith('_')]:
@@ -274,7 +179,6 @@ class Tested_Sentence:
                         distance_matrix[i + 1][j + 1] = min(distance_matrix[i + 1][j + 1],
                                                             distance_matrix[i - 1][j - 1] + cost)  # transpose
         return distance_matrix
-
 
     # def verify_variant(self, variant_foo, label: str, sentence):
     #     start_time = time.time()
@@ -341,16 +245,3 @@ def add_simple_dict_to_json_file(path_to_file, key, dict_obj):
                 data[key] = dict_obj
         json.dump(data, file, indent=4)
         file.close()
-
-
-# def check_sentences(source_txt_file_path: str, destination_file_path: str):
-#     i = 0
-#     if os.path.isfile(source_txt_file_path) and os.path.getsize(source_txt_file_path) > 0:
-#         with open(source_txt_file_path) as file:
-#             for correct_sent, incorrect_sent in itertools.zip_longest(*[file] * 2):
-#                 i += 1
-
-
-
-
-

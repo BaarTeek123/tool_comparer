@@ -94,13 +94,92 @@
 
 #
 #
+import nordvpn_switcher
+import pandas as pandas
+
+import Comparer, matplotlib.pyplot as plt
+
+
+# print(Comparer.correct_spelling_autocorrect('I mispel'))
 true_positives = {
     "spellchecker": [], "textblob": [], "autocorrect": [], "gingerit": [], "language_tool": [],
     "gingerit_spellchecker": [], "gingerit_textblob": [], "gingerit_autocorrect": [],
     "language_tool_spellchecker": [], "language_tool_textblob": [], "language_tool_autocorrect": []
 }
 import os
-directory = 'C:\\Users\\user\\PycharmProjects\\tool_comparer\\results\\'
-for k in true_positives.keys():
-    path = directory + k
-    os.mkdir(path)
+def create_dirs(directory_path, dict_of_subdirs: dict):
+    for k in dict_of_subdirs.keys():
+        path = directory_path + k
+        os.mkdir(path)
+
+# create_dirs('C:\\Users\\user\\PycharmProjects\\tool_comparer\\results\\', true_positives)
+
+# nordvpn_switcher.initialize_VPN(save=1, area_input=None, skip_settings=None)
+# nordvpn_switcher.rotate_VPN()
+# nordvpn_switcher.rotate_VPN()
+
+def merge_two_files (file_1_path, file_2_path, dest_path):
+    with open(file_1_path) as first, open(file_2_path) as second, open(dest_path, "w+") as output:
+        while 1:
+            line_first = first.readline()  # line from file1 (header)
+            line_second = second.readline()  # line from file2 (body)
+            # print(line_first + line_second)
+            output.write(line_first + line_second)
+            if not (line_first and line_second):
+                break
+
+i = 0
+import pandas
+# files = ['Future_Continuous.Txt', 'Future_Perfect.Txt', 'Future_Simple.Txt', 'Going_To_1.Txt', 'Going_To_Pl.Txt', 'Going_To_Pl_2.Txt', 'Going_To_Sg.Txt', 'Going_To_Sg_2.Txt', 'Must.Txt', 'Ought_To.Txt', 'Passive_Future_Simple.Txt', 'Passive_Past_Perfect.Txt', 'Passive_Past_Simple_Pl.Txt', 'Passive_Past_Simple_Sg.Txt', 'Passive_Present_Continuous_Pl.Txt', 'Passive_Present_Continuous_Sg.Txt', 'Passive_Present_Perfect_3.Txt', 'Passive_Present_Perfect_Not_3.Txt', 'Past_Continuous_Pl.Txt', 'Past_Continuous_Sg.Txt', 'Past_Perfect.Txt', 'Past_Simple.Txt', 'Present_Continuous_1.Txt', 'Present_Continuous_Pl.Txt', 'Present_Continuous_Sg.Txt', 'Present_Perfect_3.Txt', 'Present_Perfect_Not_3.Txt', 'Present_Simple_3.Txt', 'Present_Simple_Not_3.Txt', 'Result_Cnt.Txt', 'Result_Unc.Txt', 'Should.Txt', 'Used_To.Txt', 'Will.Txt', 'Would.Txt']
+# directory = 'grammar_incorrect'
+# for file in files:
+#     # print("'" + str(file.title()), end= '\', ')
+#     with open(directory + '\\' + file) as file:
+#         while i < 100:
+#             print(i, end=' ')
+#             i += 1
+#     print('\n', file.name)
+
+import datetime
+
+# merge_two_files('uncountable_countable\\th', 'uncountable_countable\\unc_errors.txt', 'uncountable_countable\\result_these.txt')
+
+
+
+# print(file.sheet_names[1].describe())
+
+# print(file.sheet_names)
+# print(file.parse(file.sheet_names[1]))
+# directory =
+# p = 1
+# for excel_file_path in os.listdir(directory):
+    # file = pd.ExcelFile(excel_file_path)
+    # print(file.describe())
+    # break
+
+#     print(k)
+#     for i in os.listdir(directory + '\\' + k):
+#         print(i)
+#         df = pandas.read_csv(directory + '\\' + k + '\\' + i)
+#         df.reset_index()
+#         df.columns = ['template', 'sentence_to_test', 'levenshtein_distance', 'jaro_winkler', 'damerau_levenshtein_distance', 'similarity', 'time']
+#         if p < 33:
+#             with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\first.xlsx', mode='a') as writer:
+#                 df.to_excel(writer, sheet_name=k + ' ' + i[:-4], index=False)
+#         else:
+#             with pandas.ExcelWriter ('C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx', mode='a') as writer:
+#                 df.to_excel(writer, sheet_name=k + ' ' + i[:-4], index=False)
+#         p += 1
+# template = ''
+# test_sentence = ''
+# from Comparer import Tested_Sentence, correct_spelling_autocorrect
+# dictionary = Tested_Sentence(str(template), str(correct_spelling_autocorrect(str(test_sentence)))).__dict__
+# print(dictionary)
+# print(dictionary.keys())
+
+
+
+
+
+
+
