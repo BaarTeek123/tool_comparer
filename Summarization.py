@@ -84,49 +84,6 @@ print(lev)
 
 
 
-tmp_sheets = ['spellchecker false_positives', 'spellchecker four_misspells', 'spellchecker one_misspell', 'spellchecker three_misspells', 'spellchecker two_misspells']
-for sheet in tmp_sheets:
-    df = pd.read_excel(file_path, sheet_name=sheet, usecols='C:G')
-    data = (data_frame_summary(df))
-    lev_distr = get_dictionary_distribution(df.groupby(['levenshtein_distance']).groups)
-    lev = pd.concat([lev, pd.DataFrame(lev_distr, index=[sheet])])
-    dam_lev_distr = get_dictionary_distribution(df.groupby(['damerau_levenshtein_distance']).groups)
-    d_lev = pd.concat([d_lev, pd.DataFrame(dam_lev_distr, index=[sheet])])
-    # with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\sec_result.xlsx', mode='a') as writer:
-    #         data.to_excel(writer, sheet_name=sheet, index=True)
-with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\lev_dam.xlsx', mode='a') as writer:
-        lev.to_excel(writer, sheet_name='Lev_t', index=True)
-        d_lev.to_excel(writer, sheet_name='Damerau_Lev_t', index=True)
-# df = pd.read_excel('C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx', sheet_name='spellchecker four_misspells',
-#                     usecols='C:G')
-# print(df)
-# print(()
-# print(get_dictionary_distribution(df.groupby(['levenshtein_distance']).groups))
-#
-# df = pd.read_excel('C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx', sheet_name='spellchecker one_misspell',
-#                     usecols='C:G')
-# print(df)
-# print((df.groupby(['levenshtein_distance']).groups))
-# print(get_dictionary_distribution(df.groupby(['levenshtein_distance']).groups))
-# # print(pd.DataFrame(get_dictionary_distribution(df.groupby(['levenshtein_distance']).groups)))
-#
-# # print(df.describe())
-# # print(data_frame_summary(df))
-# # print(df.dtypes)
-#
-# df = pd.read_excel('C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx', sheet_name='textblob four_misspells',
-#                     usecols='C:G')
-# print(df)
-# print(data_frame_summary(df))
-# print(df.dtypes)
-
-# dam_lev_distr = get_dictionary_distribution(df.groupby(['damerau_levenshtein_distance']).groups)
-# # print(dam_lev_distr)
-# print(pd.DataFrame(dam_lev_distr, index=['A']))
-# df = df.loc[(df['damerau_levenshtein_distance'] < (round(df['damerau_levenshtein_distance'].mean() + 3*round(df['damerau_levenshtein_distance'].std())))) & (df['damerau_levenshtein_distance'] > (round(df['damerau_levenshtein_distance'].mean() - 3*round(df['damerau_levenshtein_distance'].std()))))]
-# data = df.describe()
-# print(data_frame_summary(df))
-
 
 
 
