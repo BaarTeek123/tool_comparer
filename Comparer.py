@@ -5,12 +5,10 @@ from spellchecker import SpellChecker
 from autocorrect import Speller
 import textblob
 import Levenshtein
-# grmma
+# grammar
 from gingerit.gingerit import GingerIt
 import language_tool_python
-
 import itertools
-
 language_tool = language_tool_python.LanguageTool('en-US')
 gingerit_tool = GingerIt()
 spell_checker_tool = SpellChecker()
@@ -30,12 +28,12 @@ def correct_spelling_autocorrect(sentence: str) -> str:
 
 
 def correct_spelling_txt_blb(sentence) -> str:
-    """ A function which returns corrected spelling (by TextBlob)"""
+    """A function which returns corrected spelling (by TextBlob)"""
     return textblob.TextBlob(sentence).correct()
 
 
 def get_pos_for_word(word: str) -> str:
-    """ Method that returns a POS tag for lemmatization """
+    """ Method that returns a POS tag for lemmatization"""
     tag = nltk.pos_tag([word])[0][1][0].upper()
     tag_dict = {"J": nltk.corpus.wordnet.ADJ,
                 "N": nltk.corpus.wordnet.NOUN,
@@ -49,28 +47,16 @@ def lemmatize_word(word: str) -> str:
 
 
 def grammar_check_gingerit(sentence: str) -> str:
+    """ A function which returns corrected sentence (by GingerIt from gingerit.gingerit)"""
     return gingerit_tool.parse(sentence)['result']
 
 
 def grammar_check_language_tool(sentence: str) -> str:
+    """ A function which returns corrected sentence (by language_tool from language_tool_python)"""
     return language_tool.correct(sentence)
 
 
-# class Word:
-#     def __init__(self, word: str, correct_word: str):
-#         self.original_word = word
-#         self.lemmatized_word = lemmatize_word(word)
-#         if correct_word != word:
-#             self.corrected_word = correct_word
-#
-#     def __str__(self):
-#         if self.corrected_word:
-#             return f'{self.original_word} coorected tp: {self.corrected_word}'
-#         else:
-#             return f'{self.original_word} is correct.'
-
-
-class Tested_Sentence:
+class TestedSentence:
     default_vals = {
         'levenshtein_distance': 0,
         'damerau_levenshtein_distance': 0,
@@ -86,40 +72,6 @@ class Tested_Sentence:
         self.damerau_levenshtein_distance = len(self.__get_string_oprations(template_sentence, test_sent))
         self.similarity = Levenshtein.ratio(template_sentence, test_sent)
 
-        # self.results = {}
-        # false_positives = {
-        #     "spellchecker": [], "textblob": [], "autocorrect": [], "gingerit_results": [], "language_tool": [],
-        #     "gingerit_spellchecker": [], "gingerit_textblob": [], "gingerit_autocorrect": [],
-        #     "language_tool_spellchecker": [], "language_tool_textblob": [], "language_tool_autocorrect": [],
-        #     "median": []
-        # }
-
-        # self.verify_variant(correct_spelling_spell_checker, 'SpellChecker', self.sentence_to_test)
-        # self.verify_variant(correct_spelling_txt_blb, 'TextBlob', self.sentence_to_test)
-        # self.verify_variant(correct_spelling_autocorrect, 'Autocorrect', self.sentence_to_test)
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt', self.sentence_to_test)
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool', self.sentence_to_test)
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(SpellChecker)',
-        #                     correct_spelling_spell_checker(self.sentence_to_test))
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(TextBlob)',
-        #                     correct_spelling_txt_blb(self.sentence_to_test))
-        # self.verify_variant(grammar_check_gingerit, 'GingerIt(Autocorrect)',
-        #                     correct_spelling_autocorrect(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(SpellChecker)',
-        #                     correct_spelling_spell_checker(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(TextBlob)',
-        #                     correct_spelling_txt_blb(self.sentence_to_test))
-        # self.verify_variant(grammar_check_language_tool, 'Language_tool(Autocorrect)',
-        #                     correct_spelling_autocorrect(self.sentence_to_test))
-        # list_of_sentences = [str(k) for k in self.results.values() if k != 0]
-        # if len(list_of_sentences) > 0:
-        #     self.results['Median'] = Levenshtein.median_improve(Levenshtein.median(list_of_sentences),
-        #                                                         list_of_sentences)
-
-    # def to_dict(self):
-    #     tmp = self.__dict__.update(self.__dict__['results'])
-    #     # del tmp['results']
-    #     return tmp
     def get_attributes(self):
         dictionary = {}
         for k in [name for name in dir(self) if not name.startswith('_')]:
@@ -180,11 +132,6 @@ class Tested_Sentence:
                                                             distance_matrix[i - 1][j - 1] + cost)  # transpose
         return distance_matrix
 
-    # def verify_variant(self, variant_foo, label: str, sentence):
-    #     start_time = time.time()
-    #     self.results[label] = [str(variant_foo(sentence)), time.time() - start_time]
-
-
 def object_to_dicts(objct):
     if isinstance(objct, dict):
         return {k: object_to_dicts(v) for k, v in objct.items()}
@@ -201,12 +148,10 @@ def object_to_dicts(objct):
     else:
         return objct
 
-
 def read_json_file(path_to_file):
     with open(path_to_file, 'r') as f:
         data = json.load(f)
     return data
-
 
 def write_object_to_json_file(path_to_file, key, main_dictionary):
     if os.path.isfile(path_to_file) and os.path.getsize(path_to_file) > 0:
@@ -224,7 +169,6 @@ def write_object_to_json_file(path_to_file, key, main_dictionary):
         tmp = {key: [main_dictionary]}
         json.dump(tmp, file, indent=4)
     file.close()
-
 
 def add_simple_dict_to_json_file(path_to_file, key, dict_obj):
     # check if is empty

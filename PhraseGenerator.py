@@ -1,7 +1,6 @@
 import random
-
 from nltk import CFG
-from pattern3.text.en import conjugate, lemma, lexeme, PRESENT, SG, pluralize, referenced
+# from pattern3.text.en import conjugate, lemma, lexeme, PRESENT, SG, pluralize, referenced
 import nltk.parse.generate as generator
 import re, urllib3, json, nltk
 
@@ -51,6 +50,9 @@ I -> 'I' | 'I'
         self.grammar_rules = f'S -> {grammar_correct_rule}\n{self.grammar_rules}'
 
     def __convert_from_dict_to_gramma_form(self, dict_tagged_words: dict):
+        """A method that converts dictionary to gramma form (defined for nltk.CFG.fromstring()
+        , e.g. 'MD -> 'ought to' | 'should' | 'could' | 'will' | 'must' | 'would' | 'might' | 'may' | 'can''
+        """
         text = ''
         for key in dict_tagged_words.keys():
             text = text + key + " -> '" + "' | '".join(dict_tagged_words[key]) + "'\n"
@@ -63,8 +65,11 @@ I -> 'I' | 'I'
             tmp.append(" ".join(sent))
         return tmp
 
-
 def get_dict_of_pos_tagged_word(source_tagged_word_list) -> dict:
+    """Function that return dictionary with POS-tags as keys and set of words as values.
+    e.g. {'NN': {'radiation', 'consumer', 'border', 'health'}, 'IN': {'of', 'notwithstanding', 'with',
+    'from', 'inside', 'between', 'besides'}...}
+    An argument should be a list with tuples (word, POS-tag), e.g.: ('Confidence', 'NN'), ('in', 'IN'), ('the', 'DT')"""
     tagged_words = {}
     for tup_word_pos_tag in source_tagged_word_list.tagged_words():
         if tup_word_pos_tag[0].isalnum() and tup_word_pos_tag[1] not in tagged_words.keys():
@@ -73,8 +78,8 @@ def get_dict_of_pos_tagged_word(source_tagged_word_list) -> dict:
             tagged_words[tup_word_pos_tag[1]].add(tup_word_pos_tag[0].lower())
     return tagged_words
 
-
 def is_countable_noun(noun: str) -> bool:
+    """Function that checks if the noun is countable or uncountable."""
     noun = re.sub(' ', '\+', noun)
     url = 'https://books.google.com/ngrams/graph?content=many+' + noun + '%2C+much+' + noun + '&year_start=1750&year_end=2020'
     http = urllib3.PoolManager()
@@ -97,6 +102,3 @@ def is_countable_noun(noun: str) -> bool:
     return many >= much
 
 
-# print(Sentence('I', 'love', 'this piece of shit'))
-# print(Sentence('I', 'love', 'this', 'piece', 'of', 'shit'))
-# print(Sentence('I', 'love', 'this', 'piece', 'of shit'))

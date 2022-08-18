@@ -1,6 +1,7 @@
 import random, re, string
 
 def transpose(word: str) -> str:
+    """Function that transposes chars in the word."""
     if len(word) >= 3:
         x = random.randint(0, len(word) - 2)
         if word[x] == word[x + 1]:
@@ -12,6 +13,7 @@ def transpose(word: str) -> str:
 
 
 def deletion(word: str) -> str:
+    """Function that deletes a char in the word."""
     if len(word) >= 3:
         x = random.randint(0, len(word) - 1)
         if x > 0:
@@ -21,6 +23,7 @@ def deletion(word: str) -> str:
 
 
 def substitution(word: str) -> str:
+    """Function that substitutes a char in the word."""
     if len(word) >= 2:
         x = random.randint(0, len(word) - 1)
         word = list(word)
@@ -29,12 +32,14 @@ def substitution(word: str) -> str:
 
 
 def insert(word: str) -> str:
+    """Function that inserts a char in the word."""
     x = random.randint(0, len(word))
     word = word[:x] + random.choice(re.sub(r'[\s]', '', string.printable)) + word[x:]
     return word
 
 
 def misspell_sentence(sentence: str, amount_of_misspells: int = 1) -> str:
+    """Function that misspells the sentence."""
     if len(sentence) > amount_of_misspells:
         while amount_of_misspells > 0:
             operation_choice = random.randint(1, 4)

@@ -3,10 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
-# def three_sigma(data_frame: pandas.DataFrame):
-#     return data_frame.loc[(data_frame[data_frame.columns[0]] < (round(data_frame[data_frame.columns[0]].mean() + 3 * round(df[data_frame.columns[0]].std())))) & (
-#                             data_frame[data_frame.columns[0]] > (round(data_frame[data_frame.columns[0]].mean() - 3 * round(df[data_frame.columns[0]].std()))))]
-
+def three_sigma(data_frame: pandas.DataFrame):
+    return data_frame.loc[(data_frame[data_frame.columns[0]] < (round(data_frame[data_frame.columns[0]].mean() + 3 * round(df[data_frame.columns[0]].std())))) & (
+                            data_frame[data_frame.columns[0]] > (round(data_frame[data_frame.columns[0]].mean() - 3 * round(df[data_frame.columns[0]].std()))))]
 
 def data_frame_summary(data_frame: pandas.DataFrame) -> pd.DataFrame:
     data = {}
@@ -32,7 +31,6 @@ worksheet_names = pd.read_excel(file_path, None).keys()
 # print(worksheet_names)
 i = 1
 lev, d_lev = pd.DataFrame(), pd.DataFrame()
-'''
 # file_paths = ['C:\\Users\\user\\PycharmProjects\\tool_comparer\\first.xlsx', 'C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx']
 # worksheet_names = pd.read_excel(file_paths, None).keys()
 df = None
@@ -41,8 +39,8 @@ for sheet in worksheet_names:
     if 'spell' not in sheet[:6]:
         df = three_sigma(df)
     data = data_frame_summary(df)
-    # with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\first_result.xlsx', mode='a') as writer:
-    #             data.to_excel(writer, sheet_name=sheet, index=True)
+    with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\first_result.xlsx', mode='a') as writer:
+        data.to_excel(writer, sheet_name=sheet, index=True)
     dam_lev_distr = get_dictionary_distribution(df.groupby(['damerau_levenshtein_distance']).groups)
     d_lev = pd.concat([d_lev, pd.DataFrame(dam_lev_distr, index=[sheet])])
     lev_distr = get_dictionary_distribution(df.groupby(['levenshtein_distance']).groups)
@@ -56,7 +54,7 @@ print(lev)
 
 file_path = 'C:\\Users\\user\\PycharmProjects\\tool_comparer\\second.xlsx'
 worksheet_names = pd.read_excel(file_path, None).keys()
-print(worksheet_names)
+# damerau
 for sheet in worksheet_names:
     print(sheet)
     df = pd.read_excel(file_path, sheet_name=sheet, usecols='C:G')
@@ -74,7 +72,7 @@ for sheet in worksheet_names:
 print(d_lev)
 print(lev)
 
-
+# write to excel lev and damerau-lev distribution
 # with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\lev_dam.xlsx', mode='a') as writer:
 #         lev.to_excel(writer, sheet_name='Lev', index=True)
 #         d_lev.to_excel(writer, sheet_name='Damerau_Lev', index=True)
@@ -84,7 +82,7 @@ print(lev)
 #     with pandas.ExcelWriter('C:\\Users\\user\\PycharmProjects\\tool_comparer\\result.xlsx', mode='a+') as writer:
 #                  df.to_excel(writer, sheet_name=sheet + ' ', index=False)
 
-'''
+
 
 tmp_sheets = ['spellchecker false_positives', 'spellchecker four_misspells', 'spellchecker one_misspell', 'spellchecker three_misspells', 'spellchecker two_misspells']
 for sheet in tmp_sheets:

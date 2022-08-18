@@ -1,4 +1,8 @@
-# import Levenshtein
+import os
+import Levenshtein
+
+
+
 # import pandas as pd
 # import Comparer, DataProcessing
 #
@@ -106,7 +110,7 @@ true_positives = {
     "gingerit_spellchecker": [], "gingerit_textblob": [], "gingerit_autocorrect": [],
     "language_tool_spellchecker": [], "language_tool_textblob": [], "language_tool_autocorrect": []
 }
-import os
+
 def create_dirs(directory_path, dict_of_subdirs: dict):
     for k in dict_of_subdirs.keys():
         path = directory_path + k
@@ -176,6 +180,9 @@ import datetime
 # dictionary = Tested_Sentence(str(template), str(correct_spelling_autocorrect(str(test_sentence)))).__dict__
 # print(dictionary)
 # print(dictionary.keys())
+import nltk
+from PhraseGenerator import get_dict_of_pos_tagged_word
+print(nltk.corpus.conll2000.tagged_words())
 
 
 
